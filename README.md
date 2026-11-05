@@ -1,4 +1,4 @@
-# AnarchyMod — unofficial AnarchyMod local fork
+# AnarchyMod — unofficial AnarchyMod fork
 
 Unofficial Fabric mod derived from the MIT-licensed AnarchyMod sources. Not affiliated with Mojang, 6b6t, or 9b9t.
 
