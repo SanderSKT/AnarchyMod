@@ -26,7 +26,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
         this.anarchymod$blacklistButton = this.addRenderableWidget(
                 Button.builder(Component.literal("Blacklist"),
                         button -> this.minecraft.setScreen(new BlacklistScreen(this)))
-                        .bounds(0, 0, 76, 20).build());
+                        .bounds(0, 0, 68, 20).build());
         this.anarchymod$positionButton();
     }
 
@@ -60,15 +60,11 @@ public abstract class MultiplayerScreenMixin extends Screen {
         if (vanillaLeft == Integer.MAX_VALUE) {
             vanillaLeft = this.width / 2 - 154;
         }
-        final int buttonWidth = 76;
-        int x = vanillaLeft - buttonWidth - 4;
-        int y = desiredY;
-        if (x < 8) {
-            // Narrow screens: move above the vanilla controls rather than
-            // obstructing their hitboxes.
-            x = Math.max(8, (this.width - buttonWidth) / 2);
-            y = Math.max(8, this.height - 79);
-        }
-        this.anarchymod$blacklistButton.setPosition(x, Math.max(8, y));
+        // A compact 68px button fits to the left of the vanilla row even
+        // at the narrower GUI scale shown in the user's screenshot.
+        // Never move into the server list: keep it anchored in the footer.
+        final int buttonWidth = 68;
+        int x = Math.max(4, vanillaLeft - buttonWidth - 4);
+        this.anarchymod$blacklistButton.setPosition(x, Math.max(8, desiredY));
     }
 }
