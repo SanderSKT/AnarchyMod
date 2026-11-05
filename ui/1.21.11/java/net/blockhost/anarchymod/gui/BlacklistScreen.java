@@ -54,7 +54,7 @@ public final class BlacklistScreen extends Screen {
                 .bounds(x + contentWidth - 76, panelTop + 60, 76, 20).build());
         this.addRenderableWidget(Button.builder(
                 Component.literal("Include subdomains: " + (subdomains ? "ON" : "OFF")),
-                b -> show(!subdomains, this.requestedPage, "", this.address.getValue()))
+                b -> show(!subdomains, this.page, "", this.address.getValue()))
                 .bounds(x, panelTop + 88, Math.min(190, contentWidth), 20).build());
 
         this.visibleEntries = CustomDomains.list();
@@ -86,7 +86,7 @@ public final class BlacklistScreen extends Screen {
             value = "*." + value;
         }
         String result = CustomDomains.add(value);
-        show(subdomains, page, result, "");
+        show(subdomains, page, result, result.startsWith("Added:") ? "" : this.address.getValue());
     }
 
     private void show(boolean subdomains, int page, String status, String draft) {
@@ -137,7 +137,7 @@ public final class BlacklistScreen extends Screen {
                     x + 4, panelTop + 164, 0xFFAAAAAA);
         }
         if (!status.isBlank()) {
-            graphics.drawString(this.font, status.length() > 56 ? status.substring(0, 53) + "..." : status,
+            graphics.drawString(this.font, status.length() > 44 ? status.substring(0, 41) + "..." : status,
                     x, panelTop + panelHeight - 70, 0xFFFFD070);
         }
         int pages = Math.max(1, (visibleEntries.size() + pageSize - 1) / pageSize);
