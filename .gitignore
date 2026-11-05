@@ -1,0 +1,16 @@
+# Compiled files and IDE metadata
+target/
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
+.DS_Store
+.kotlin/
+.gradle/
+**/build/
+*.iml
+*.iws
+*.ipr
+**/run/
+versions/*/logs/
