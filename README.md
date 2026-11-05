@@ -5,7 +5,7 @@ Unofficial Fabric mod derived from the MIT-licensed AnarchyMod sources. Not affi
 ## Features
 
 - Local exceptions for `9b9t.com`, `9b9t.org`, `2b2t.com` and original built-in domains, including their subdomains.
-- No remote domain fetches, analytics, or automatic server-list entries.
+- **Privacy:** Removed all original 6b6t telemetry and analytics, remote domain fetching, and automatic 6b6t server-list insertion. The mod operates entirely offline and does not send usage data to 6b6t.
 - **Minecraft 1.21.11:** a `Blacklist` button beside the bottom multiplayer controls opens a compact Blacklist Manager.
 - Add/remove custom hostnames without restarting Minecraft, optionally allowing subdomains.
 - Custom entries persist in `config/anarchymod.json`. Built-in exceptions remain enabled and separate from user entries.
