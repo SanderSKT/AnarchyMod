@@ -100,27 +100,32 @@ public final class BlacklistScreen extends Screen {
         // A solid overlay needs no extra blur and avoids IllegalStateException:
         // "Can only blur once per frame".
         graphics.fill(0, 0, this.width, this.height, 0xF0121821);
+        int panelLeft = this.width / 2 - 166;
+        int panelRight = this.width / 2 + 166;
+        graphics.fill(panelLeft, 8, panelRight, this.height - 8, 0xE51A202A);
+        graphics.fill(panelLeft, 8, panelRight, 9, 0xFF51627A);
+        graphics.fill(panelLeft, this.height - 9, panelRight, this.height - 8, 0xFF51627A);
         super.render(graphics, mouseX, mouseY, delta);
         int x = this.width / 2 - 150;
-        graphics.drawCenteredString(this.font, this.title, this.width / 2, 15, 0xFFFFFF);
-        graphics.drawString(this.font, "Server hostname (no http://):", x, 35, 0xBBBBBB);
-        graphics.drawString(this.font, "Custom exceptions (" + visibleEntries.size() + "):", x, 105, 0xAAAAAA);
+        graphics.drawCenteredString(this.font, this.title, this.width / 2, 15, 0xFFFFFFFF);
+        graphics.drawString(this.font, "Server hostname (no http://):", x, 35, 0xFFBBBBBB);
+        graphics.drawString(this.font, "Custom exceptions (" + visibleEntries.size() + "):", x, 105, 0xFFAAAAAA);
 
         for (int i = 0; i < pageSize && page * pageSize + i < visibleEntries.size(); i++) {
             String entry = visibleEntries.get(page * pageSize + i);
             String caption = entry.length() > 35 ? entry.substring(0, 32) + "..." : entry;
-            graphics.drawString(this.font, caption, x + 6, 125 + 24 * i, 0xE5E5E5);
+            graphics.drawString(this.font, caption, x + 6, 125 + 24 * i, 0xFFE5E5E5);
         }
         if (visibleEntries.isEmpty()) {
             graphics.drawString(this.font, "No custom servers. Built-in exceptions remain active.",
-                    x + 6, 128, 0xAAAAAA);
+                    x + 6, 128, 0xFFAAAAAA);
         }
         if (!status.isBlank()) {
             graphics.drawString(this.font, status.length() > 56 ? status.substring(0, 53) + "..." : status,
-                    x, this.height - 75, 0xFFD070);
+                    x, this.height - 75, 0xFFFFD070);
         }
         int pages = Math.max(1, (visibleEntries.size() + pageSize - 1) / pageSize);
         graphics.drawCenteredString(this.font, "Page " + (page + 1) + "/" + pages,
-                this.width / 2, this.height - 54, 0xAAAAAA);
+                this.width / 2, this.height - 54, 0xFFAAAAAA);
     }
 }
