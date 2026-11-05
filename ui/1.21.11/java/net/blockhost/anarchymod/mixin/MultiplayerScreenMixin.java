@@ -24,9 +24,9 @@ public abstract class MultiplayerScreenMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     private void anarchymod$addBlacklistButton(CallbackInfo ci) {
         this.anarchymod$blacklistButton = this.addRenderableWidget(
-                Button.builder(Component.literal("Blacklist Manager"),
+                Button.builder(Component.literal("Blacklist"),
                         button -> this.minecraft.setScreen(new BlacklistScreen(this)))
-                        .bounds(0, 0, 132, 20).build());
+                        .bounds(0, 0, 76, 20).build());
         this.anarchymod$positionButton();
     }
 
@@ -45,13 +45,30 @@ public abstract class MultiplayerScreenMixin extends Screen {
         if (this.anarchymod$blacklistButton == null) {
             return;
         }
-        // Always place it beside, not on top of, the lower vanilla controls.
-        // Recalculate on each layout pass and client tick: other mods may
-        // resize/reflow the screen after init(), leaving a floating button.
-        int buttonWidth = 132;
-        int desiredX = this.width / 2 + 170;
-        int x = Math.max(8, Math.min(this.width - buttonWidth - 8, desiredX));
-        int y = Math.max(8, this.height - 27);
-        this.anarchymod$blacklistButton.setPosition(x, y);
+        int desiredY = this.height - 27;
+        int vanillaLeft = Integer.MAX_VALUE;
+        // Find Edit/Delete/Refresh in the bottom vanilla row. This also adapts
+        // to layouts that have been moved by other client-side mods.
+        for (var child : this.children()) {
+            if (child instanceof Button button && button != this.anarchymod$blacklistButton
+                    && Math.abs(button.getY() - desiredY) <= 4
+                    && button.getX() >= this.width / 2 - 180
+                    && button.getX() < this.width / 2 - 75) {
+                vanillaLeft = Math.min(vanillaLeft, button.getX());
+            }
+        }
+        if (vanillaLeft == Integer.MAX_VALUE) {
+            vanillaLeft = this.width / 2 - 154;
+        }
+        final int buttonWidth = 76;
+        int x = vanillaLeft - buttonWidth - 4;
+        int y = desiredY;
+        if (x < 8) {
+            // Narrow screens: move above the vanilla controls rather than
+            // obstructing their hitboxes.
+            x = Math.max(8, (this.width - buttonWidth) / 2);
+            y = Math.max(8, this.height - 79);
+        }
+        this.anarchymod$blacklistButton.setPosition(x, Math.max(8, y));
     }
 }
