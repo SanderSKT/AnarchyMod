@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "anarchymod",
+  "version": "${version}",
+  "name": "AnarchyMod — 9b9t Local (unofficial)",
+  "description": "Offline blocked-server allowlist for 9b9t.com, 9b9t.org, 2b2t.com, and original server domains. No remote fetching or analytics.",
+  "authors": [
+    "6b6t (original project)",
+    "Unofficial 9b9t local patch"
+  ],
+  "contact": {
+    "sources": "https://6b6t.kianbrose.com/AnarchyMod/"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.blockhost.anarchymod.AnarchyMod"
+    ]
+  },
+  "mixins": [
+    "anarchymod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=${java_version}"
+  }
+}
