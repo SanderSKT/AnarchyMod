@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/**'
       - 'versions/1.21.11/**'
+      - 'ui/1.21.11/**'
       - '*.gradle.kts'
       - 'gradle.properties'
       - '.github/workflows/build-1.21.11.yml'
