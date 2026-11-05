@@ -17,6 +17,13 @@ base {
 // for fallback since 6 requires 17+ and 5 requires <17
 val junitJupiterVersion = if (javaVersion >= 17) "6.1.2" else "5.10.3"
 
+// GUI implementation and additional Mixin exist only in the 1.21.11 build.
+if (minecraftVersion == "1.21.11") {
+    sourceSets.main {
+        java.srcDir(rootProject.file("ui/1.21.11/java"))
+    }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
     mappings(loom.officialMojangMappings())
@@ -52,6 +59,11 @@ tasks.processResources {
         expand(
             "java_version" to javaVersion
         )
+        if (minecraftVersion == "1.21.11") {
+            filter { line: String ->
+                line.replace("\"BlockedServersMixin\"", "\"BlockedServersMixin\", \"MultiplayerScreenMixin\"")
+            }
+        }
     }
 }
 

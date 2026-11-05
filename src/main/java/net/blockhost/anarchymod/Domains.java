@@ -21,6 +21,8 @@ public final class Domains {
         "*.anarchypvp.pw", "*.l2x9.org", "*.simpleanarchy.org"
     )));
 
+    private static volatile Set<String> customDomains = Collections.emptySet();
+
     private Domains() {
     }
 
@@ -31,6 +33,12 @@ public final class Domains {
         }
 
         for (String entry : DOMAINS) {
+            if (matchesNormalized(domain, entry)) {
+                return true;
+            }
+        }
+
+        for (String entry : customDomains) {
             if (matchesNormalized(domain, entry)) {
                 return true;
             }
@@ -52,6 +60,39 @@ public final class Domains {
 
         String base = entry.substring(2);
         return domain.equals(base) || domain.endsWith("." + base);
+    }
+
+    /**
+     * Replaces all user-added exceptions atomically. Does not alter built-ins.
+     * A volatile immutable snapshot keeps checks safe while a screen edits the list.
+     */
+    public static void setCustomDomains(java.util.Collection<String> patterns) {
+        Set<String> cleaned = new HashSet<>();
+        for (String raw : patterns) {
+            String value = canonicalPattern(raw);
+            if (value != null && !DOMAINS.contains(value)) {
+                cleaned.add(value);
+            }
+        }
+        customDomains = Collections.unmodifiableSet(cleaned);
+    }
+
+    public static boolean isBuiltIn(String canonicalPattern) {
+        return DOMAINS.contains(canonicalPattern);
+    }
+
+    /** Canonicalized domain or *.domain; never accepts URLs or invalid ports. */
+    public static String canonicalPattern(String input) {
+        String canonical = normalizeEntry(input);
+        if (canonical == null) {
+            return null;
+        }
+        String host = canonical.startsWith("*.") ? canonical.substring(2) : canonical;
+        // The client blacklist is hostname-based; a domain needs at least one dot.
+        if (!host.contains(".") || host.contains(":")) {
+            return null;
+        }
+        return canonical;
     }
 
     private static String normalizeEntry(String input) {

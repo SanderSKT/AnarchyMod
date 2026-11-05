@@ -6,6 +6,9 @@ import net.fabricmc.api.ClientModInitializer;
 public class AnarchyMod implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        // Deliberately empty: no server-list edits, analytics, or remote requests.
+        //? if 1.21.11 {
+        net.blockhost.anarchymod.gui.CustomDomains.load();
+        //? }
+        // No remote requests, analytics or server-list modification.
     }
 }
