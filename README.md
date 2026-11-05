@@ -11,13 +11,13 @@ Unofficial fork of the MIT-licensed AnarchyMod source archive provided by the re
 
 ## Build
 
-The source is for Fabric. Build with Gradle and a compatible JDK (JDK 25+ for the full multi-version build):
+The source is for Fabric. Build with an installed Gradle 9.7.1 and a compatible JDK (JDK 25+ for the full multi-version build):
 
 ```powershell
-./gradlew.bat chiseledBuild
+gradle chiseledBuild
 ```
 
-Look under `versions/<minecraft-version>/build/libs/` for outputs. Remove the original AnarchyMod JAR before installing this fork, since the Fabric mod ID is unchanged. The original Gradle wrapper binary is not included in this repository because its provenance was not verified; regenerate it using a trusted Gradle installation or use `gradle chiseledBuild` directly.
+Look under `versions/<minecraft-version>/build/libs/` for outputs. Remove the original AnarchyMod JAR before installing this fork, since the Fabric mod ID is unchanged. The original Gradle wrapper binary is not included in this repository because its provenance was not verified; regenerate it using a trusted Gradle installation (`gradle wrapper --gradle-version 9.7.1`) if you want to use `gradlew.bat`; otherwise use `gradle chiseledBuild` directly.
 
 **Not tested in-game.** This patch only affects the client-side server blacklist. A `java.net.SocketException: Connection reset` can have unrelated network or server-side causes.
 
