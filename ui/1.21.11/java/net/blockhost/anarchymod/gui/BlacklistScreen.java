@@ -95,7 +95,11 @@ public final class BlacklistScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        this.renderBackground(graphics, mouseX, mouseY, delta);
+        // Do NOT invoke Screen.renderBackground here: the normal screen render
+        // pipeline (and other mods) can already apply the blur pass once.
+        // A solid overlay needs no extra blur and avoids IllegalStateException:
+        // "Can only blur once per frame".
+        graphics.fill(0, 0, this.width, this.height, 0xF0121821);
         super.render(graphics, mouseX, mouseY, delta);
         int x = this.width / 2 - 150;
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 15, 0xFFFFFF);
