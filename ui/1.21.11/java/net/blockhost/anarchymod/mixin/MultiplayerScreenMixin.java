@@ -1,7 +1,6 @@
 package net.blockhost.anarchymod.mixin;
 
 import net.blockhost.anarchymod.gui.BlacklistScreen;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
@@ -31,9 +30,13 @@ public abstract class MultiplayerScreenMixin extends Screen {
         this.anarchymod$positionButton();
     }
 
-    @Inject(method = "render", at = @At("HEAD"))
-    private void anarchymod$updateButtonPosition(GuiGraphics graphics, int mouseX, int mouseY,
-                                                float delta, CallbackInfo ci) {
+    @Inject(method = "repositionElements", at = @At("TAIL"))
+    private void anarchymod$afterLayout(CallbackInfo ci) {
+        this.anarchymod$positionButton();
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void anarchymod$keepButtonAnchored(CallbackInfo ci) {
         this.anarchymod$positionButton();
     }
 
@@ -43,8 +46,8 @@ public abstract class MultiplayerScreenMixin extends Screen {
             return;
         }
         // Always place it beside, not on top of, the lower vanilla controls.
-        // Recalculate on every render: other mods may resize/reflow the screen
-        // after init(), so positioning only there can leave a floating button.
+        // Recalculate on each layout pass and client tick: other mods may
+        // resize/reflow the screen after init(), leaving a floating button.
         int buttonWidth = 132;
         int desiredX = this.width / 2 + 170;
         int x = Math.max(8, Math.min(this.width - buttonWidth - 8, desiredX));
