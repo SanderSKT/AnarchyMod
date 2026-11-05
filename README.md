@@ -1,26 +1,46 @@
-# AnarchyMod 1.5.0 — unofficial 9b9t local patch
+# AnarchyMod — unofficial 9b9t local fork
 
-Unofficial fork of the MIT-licensed AnarchyMod source archive provided by the repository owner. Not affiliated with 6b6t or 9b9t.
+Unofficial Fabric mod derived from the MIT-licensed AnarchyMod sources. Not affiliated with Mojang, 6b6t, or 9b9t.
 
-## Changes
+## Features
 
-- Adds the base domains and subdomains of `9b9t.com`, `9b9t.org`, and `2b2t.com` to the local blocked-server exception list.
-- Preserves the 11 original built-in server patterns.
-- Removes remote domain-list fetching, join analytics, and automatic insertion of 6b6t into the Minecraft server list.
-- Keeps only the blocked-server-check Mixin.
+- Local exceptions for `9b9t.com`, `9b9t.org`, `2b2t.com` and original built-in domains, including their subdomains.
+- No remote domain fetches, analytics, or automatic server-list entries.
+- **Minecraft 1.21.11:** a `Blacklist` button beside the bottom multiplayer controls opens a compact Blacklist Manager.
+- Add/remove custom hostnames without restarting Minecraft, optionally allowing subdomains.
+- Custom entries persist in `config/anarchymod.json`. Built-in exceptions remain enabled and separate from user entries.
 
-## Build
+Example config (generated automatically when you add an address):
 
-The source is for Fabric. Build with an installed Gradle 9.7.1 and a compatible JDK (JDK 25+ for the full multi-version build):
-
-```powershell
-gradle chiseledBuild
+```json
+{
+  "customDomains": ["*.example.org", "play.example.net"]
+}
 ```
 
-Look under `versions/<minecraft-version>/build/libs/` for outputs. Remove the original AnarchyMod JAR before installing this fork, since the Fabric mod ID is unchanged. The original Gradle wrapper binary is not included in this repository because its provenance was not verified; regenerate it using a trusted Gradle installation (`gradle wrapper --gradle-version 9.7.1`) if you want to use `gradlew.bat`; otherwise use `gradle chiseledBuild` directly.
+`*.example.org` allows `example.org` and its subdomains; `play.example.net` matches that hostname only. The setting affects the local client-side server blocklist check, **not** the Minecraft account, DNS, network connectivity or server-side bans.
 
-**Not tested in-game.** This patch only affects the client-side server blacklist. A `java.net.SocketException: Connection reset` can have unrelated network or server-side causes.
+## Install
 
-Upstream source: https://6b6t.kianbrose.com/AnarchyMod/
+Use the GitHub Actions artifact for your Minecraft version; unzip it and place the compiled JAR in the instance's `mods` folder. Remove the original AnarchyMod or previous fork JAR first (the Fabric mod ID is `anarchymod`).
 
-License: MIT, see [LICENSE](LICENSE).
+- [Minecraft 1.21.11 build](../../actions/workflows/build-1.21.11.yml)
+- [Minecraft 26.2 build](../../actions/workflows/build-26.2.yml)
+
+The Blacklist Manager UI is currently implemented only for Minecraft 1.21.11. The 26.2 build retains the offline built-in exceptions but does not expose this editor.
+
+## Build from source
+
+Requires installed Gradle 9.7.1 and a compatible JDK; Minecraft 1.21.11 uses JDK 21:
+
+```powershell
+gradle :1.21.11:build
+```
+
+Output: `versions/1.21.11/build/libs/`. For a multi-version build, use `gradle chiseledBuild` with a suitable JDK (25+ for recent versions). This repository does not include an unverified Gradle wrapper JAR.
+
+## Notes
+
+Builds are checked by GitHub Actions, but the current UI changes still need in-game verification with other UI mods. A `java.net.SocketException: Connection reset` may have unrelated network or server-side causes.
+
+Upstream source: https://6b6t.kianbrose.com/AnarchyMod/ · License: MIT, see [LICENSE](LICENSE).
