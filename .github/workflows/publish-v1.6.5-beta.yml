@@ -1,0 +1,90 @@
+name: Publish AnarchyMod v1.6.5-beta
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-v1.6.5-beta.yml'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: anarchymod-release-v1.6.5-beta
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release notes and source
+        uses: actions/checkout@v4
+
+      - name: Publish verified Minecraft 1.21.11 JAR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v1.6.5-beta
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; not replacing an existing published asset."
+            exit 0
+          fi
+
+          mkdir -p dist
+          gh run download 42108731605 \
+            --repo "$GITHUB_REPOSITORY" \
+            --name anarchymod-9b9t-minecraft-1.21.11 \
+            --dir dist
+
+          mapfile -t jars < <(find dist -type f -name '*.jar' ! -name '*-sources.jar' ! -name '*-dev.jar')
+          if [ "${#jars[@]}" -ne 1 ]; then
+            echo "Expected exactly one release JAR; found ${#jars[@]}" >&2
+            exit 1
+          fi
+
+          release_jar="AnarchyMod-1.6.5-mc1.21.11-fabric.jar"
+          cp "${jars[0]}" "$release_jar"
+          unzip -p "$release_jar" fabric.mod.json | grep -Fq '"version": "1.6.5-9b9t-manager"'
+          unzip -p "$release_jar" anarchymod.mixins.json | grep -Fq 'MultiplayerScreenMixin'
+          unzip -Z1 "$release_jar" | grep -Fq 'net/blockhost/anarchymod/gui/BlacklistScreen.class'
+          unzip -Z1 "$release_jar" | grep -Fq 'net/blockhost/anarchymod/gui/CustomDomains.class'
+          echo "Verified release JAR: $release_jar"
+
+          cat > RELEASE_NOTES.md <<'NOTES'
+          # AnarchyMod v1.6.5-beta
+
+          First public beta of the unofficial AnarchyMod community fork.
+
+          ## Highlights
+          - **Minecraft 1.21.11 (Fabric, Java 21)**: local **Blacklist** button and Blacklist Manager with an editable list of domain exceptions.
+          - Custom hostnames and optional subdomains (for example, `example.org` or `*.example.org`).
+          - Changes take effect without restarting Minecraft and are saved in `config/anarchymod.json`.
+          - Built-in local exceptions for 9b9t, 2b2t and the original AnarchyMod server patterns.
+          - Removed the original 6b6t telemetry/analytics, remote domain fetching and automatic 6b6t server-list insertion.
+
+          ## Installation
+          1. Use **Minecraft 1.21.11** with **Fabric Loader** and **Java 21**.
+          2. Download **AnarchyMod-1.6.5-mc1.21.11-fabric.jar** from the Assets section below.
+          3. Remove the original AnarchyMod or any previous version of this fork from your `mods` folder.
+          4. Put the new JAR in the same folder, launch Minecraft, then open **Multiplayer → Blacklist**.
+
+          ## Beta notes
+          - The graphical Blacklist Manager is available only for **Minecraft 1.21.11**. Other builds, such as Minecraft 26.2, have a separate CI artifact but no GUI manager yet.
+          - The UI may have minor layout limitations on very narrow Minecraft windows or with other GUI mods.
+          - The mod only changes Minecraft's local blocked-server hostname check. It cannot bypass server bans, network failures, account restrictions, or connection resets caused by other issues.
+          - Unofficial community project; not affiliated with Mojang, 6b6t or 9b9t. Please report issues in the repository's Issues tab.
+          NOTES
+
+          gh release create "$TAG" "$release_jar" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "AnarchyMod v1.6.5-beta — Minecraft 1.21.11" \
+            --notes-file RELEASE_NOTES.md \
+            --prerelease \
+            --target "$GITHUB_SHA"
+
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url,tagName,isPrerelease,assets
