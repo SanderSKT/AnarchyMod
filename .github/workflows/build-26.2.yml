@@ -1,0 +1,35 @@
+name: Build AnarchyMod 9b9t (Minecraft 26.2)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-26-2:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout patched sources
+        uses: actions/checkout@v4
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Set up official Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.7.1'
+      - name: Compile and test 26.2 with Fabric Loom
+        run: gradle :26.2:build --stacktrace
+      - name: Publish built JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: anarchymod-9b9t-minecraft-26.2
+          path: |
+            versions/26.2/build/libs/*.jar
+            !versions/26.2/build/libs/*-sources.jar
+            !versions/26.2/build/libs/*-dev.jar
+          if-no-files-found: error
