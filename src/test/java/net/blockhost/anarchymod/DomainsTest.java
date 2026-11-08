@@ -10,11 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DomainsTest {
 
     @Test
-    void matchesDefaultDomainsAndSubdomains() {
-        assertTrue(Domains.contains("9b9t.com"));
-        assertTrue(Domains.contains("play.9b9t.com"));
-        assertTrue(Domains.contains("9b9t.org"));
-        assertTrue(Domains.contains("play.9b9t.org"));
+    void matchesBuiltInDomainsAndSubdomainsWithout9b9t() {
+        assertFalse(Domains.contains("9b9t.com"));
+        assertFalse(Domains.contains("play.9b9t.com"));
+        assertFalse(Domains.contains("9b9t.org"));
+        assertFalse(Domains.contains("play.9b9t.org"));
+        assertFalse(Domains.contains("PLAY.9B9T.COM:25565"));
+        assertFalse(Domains.contains("9b9t.com."));
         assertTrue(Domains.contains("2b2t.com"));
         assertTrue(Domains.contains("mc.2b2t.com"));
         assertTrue(Domains.contains("PLAY.9B9T.COM:25565"));
@@ -28,6 +30,19 @@ class DomainsTest {
         assertFalse(Domains.contains("fake9b9t.com"));
         assertFalse(Domains.contains("fake2b2t.com"));
         assertFalse(Domains.contains("9b9t.com.evil.example"));
+    }
+
+    @Test
+    void allows9b9tWhenAddedAsCustomException() {
+        try {
+            Domains.setCustomDomains(java.util.Arrays.asList("*.9b9t.com", "*.9b9t.org"));
+            assertTrue(Domains.contains("9b9t.com"));
+            assertTrue(Domains.contains("play.9b9t.com"));
+            assertTrue(Domains.contains("9b9t.org"));
+            assertTrue(Domains.contains("play.9b9t.org"));
+        } finally {
+            Domains.setCustomDomains(java.util.Collections.emptySet());
+        }
     }
 
     @Test
