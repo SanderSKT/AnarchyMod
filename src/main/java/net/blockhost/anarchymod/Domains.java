@@ -12,10 +12,10 @@ import java.util.Set;
  * No remote domain fetch, telemetry, or disk/network I/O.
  */
 public final class Domains {
-    // Keep existing server compatibility while adding 9b9t. A '*.' entry also
-    // matches the base host itself (see matchesNormalized below).
+    // Built-in exceptions. Additional hosts can be added in-game through Blacklist Manager.
+    // A '*.' entry also matches the base host itself (see matchesNormalized below).
     private static final Set<String> DOMAINS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-        "*.9b9t.com", "*.9b9t.org", "*.2b2t.com",
+        "*.2b2t.com",
         "*.6b6t.org", "*.10b10t.org", "*.6b6t.cc", "*.6b6t.me",
         "*.7b7t.me", "*.8b8t.org", "*.8b8t.xyz", "*.alacity.net",
         "*.anarchypvp.pw", "*.l2x9.org", "*.simpleanarchy.org"
