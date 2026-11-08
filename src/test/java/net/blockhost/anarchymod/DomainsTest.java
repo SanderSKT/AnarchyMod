@@ -19,8 +19,6 @@ class DomainsTest {
         assertFalse(Domains.contains("9b9t.com."));
         assertTrue(Domains.contains("2b2t.com"));
         assertTrue(Domains.contains("mc.2b2t.com"));
-        assertTrue(Domains.contains("PLAY.9B9T.COM:25565"));
-        assertTrue(Domains.contains("9b9t.com."));
         assertTrue(Domains.contains("6b6t.org"));
         assertTrue(Domains.contains("play.6b6t.org"));
         assertTrue(Domains.contains("PLAY.6B6T.ORG:25565"));
